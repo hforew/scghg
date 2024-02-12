@@ -10,7 +10,7 @@ Pkg.activate(joinpath(@__DIR__, ".."));
 Pkg.instantiate();
 
 ## precompile
-using Mimi, MimiGIVE, MimiRFFSPs, DataDeps, Random, CSV, DataFrames, Statistics;
+using Mimi, MimiGIVE, MimiRFFSPs, DataDeps, Random, CSV, DataFrames, Statistics, Distributed; # added distributed to this
 
 ## automatically download data dependancies (rffsps)
 ENV["DATADEPS_ALWAYS_ACCEPT"] = "true"
@@ -24,7 +24,7 @@ MimiRFFSPs.datadep"rffsps_v5"
 seed = 42;
 
 ## set number of monte carlo draws
-n = 10000;
+n = 10; # reduce for faster run
 
 ## set emissions years
 years = [2020, 2030, 2040, 2050, 2060, 2070, 2080];

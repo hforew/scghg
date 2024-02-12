@@ -4,17 +4,19 @@
 
 ## set the environment
 using Pkg;
-Pkg.activate(joinpath(@__DIR__, ".."));
+Pkg.activate(joinpath(@__DIR__, ".."));  # activate enviro 1 folder up from current dir
 
 ## instantiate the environment
-Pkg.instantiate();
+Pkg.instantiate(); # installs any missing packages 
+
 
 ## precompile
-using Mimi, MimiGIVE, MimiRFFSPs, DataDeps, Random, CSV, DataFrames, Statistics;
+using Mimi, MimiGIVE, MimiRFFSPs, DataDeps, Random, CSV, DataFrames, Statistics; # load packages
 
+println("starting data download")
 ## automatically download data dependancies (rffsps)
-ENV["DATADEPS_ALWAYS_ACCEPT"] = "true"
-MimiRFFSPs.datadep"rffsps_v5"
+ENV["DATADEPS_ALWAYS_ACCEPT"] = "true" # modify enviro var (set some config variable)
+MimiRFFSPs.datadep"rffsps_v5" # downloads 
 
 ######################################
 ##################### model parameters
@@ -24,7 +26,7 @@ MimiRFFSPs.datadep"rffsps_v5"
 seed = 42;
 
 ## set number of monte carlo draws
-n = 10000;
+n = 2;  # reduce number for test
 
 ## set emissions year
 year = 2020;
@@ -44,31 +46,33 @@ discount_rates =
     ];
 
 ## choose the model objects that you would like to save by uncommenting the lines (optional).
+# if uncomment any one of these lines, these data elements will be output once model complete (likely?)
+## BUT MUST specify path 
 save_list = 
     [
-        # (:Socioeconomic, :co2_emissions),                    # Emissions (GtC/yr)
-        # (:Socioeconomic, :ch4_emissions),                    # Emissions (GtCH4/yr)
-        # (:Socioeconomic, :n2o_emissions),                    # Emissions (GtN2O/yr)
+        (:Socioeconomic, :co2_emissions),                      # Emissions (GtC/yr)
+         (:Socioeconomic, :ch4_emissions),                    # Emissions (GtCH4/yr)
+         (:Socioeconomic, :n2o_emissions),                    # Emissions (GtN2O/yr)
         # (:Socioeconomic, :population),                       # Country-level population (millions of persons)
         # (:Socioeconomic, :population_global),                # Global population (millions of persons)
         # (:Socioeconomic, :gdp_global),                       # Global GDP (billions of USD $2005/yr)
         # (:PerCapitaGDP, :global_pc_gdp),                     # Global per capita GDP (thousands of USD $2005/yr)
         # (:TempNorm_1850to1900, :global_temperature_norm),    # Global surface temperature anomaly (K) from preinudstrial
-        # (:co2_cycle, :co2),                                  # Total atmospheric concentrations (ppm)
-        # (:ch4_cycle, :CH₄),                                  # Total atmospheric concentrations (ppb)
-        # (:n2o_cycle, :N₂O),                                  # Total atmospheric concentrations (ppb)
+         (:co2_cycle, :co2),                                  # Total atmospheric concentrations (ppm)
+         (:ch4_cycle, :CH₄),                                  # Total atmospheric concentrations (ppb)
+         (:n2o_cycle, :N₂O),                                  # Total atmospheric concentrations (ppb)
         # (:OceanPH, :pH),                                     # Ocean pH levels
         # (:OceanHeatAccumulator, :del_ohc_accum),             # Accumulated Ocean heat content anomaly
         # (:global_sea_level, :sea_level_rise),                # Total sea level rise from all components (includes landwater storage for projection periods) (m)
-        # (:CromarMortality, :excess_deaths),                  # Country-level excess deaths
-        # (:CromarMortality, :excess_death_rate),              # Country-level excess death rate
-        # (:DamageAggregator, :cromar_mortality_damage),       # Mortality damages 
-        # (:DamageAggregator, :agriculture_damage),            # Agricultural damages  
-        # (:DamageAggregator, :energy_damage)                  # Energy Damages
+         (:CromarMortality, :excess_deaths),                  # Country-level excess deaths
+         (:CromarMortality, :excess_death_rate),              # Country-level excess death rate
+         (:DamageAggregator, :cromar_mortality_damage),       # Mortality damages 
+         (:DamageAggregator, :agriculture_damage),            # Agricultural damages  
+         (:DamageAggregator, :energy_damage)                  # Energy Damages
     ];
 
 ## specify your output directory for the save_list items. comment out if save_list is empty
-# output_dir = joinpath(@__DIR__, "../output/save_list/$gas-$damages-$year-n$n")
+ output_dir = joinpath(@__DIR__, "../output/save_list/$gas-$damages-$year-n$n")
 
 ## read the series of rffsp-fair pairings. these were randomly selected pairings. read GIVE documentation for other functionality.
 fair_parameter_set_ids = CSV.File(joinpath(@__DIR__, "../input/rffsp_fair_sequence.csv"))["fair_id"][1:n];
@@ -84,10 +88,12 @@ pricelevel_2005_to_2020 = 113.648/87.504;
 ## set random seed
 Random.seed!(seed);
 
+println("create model object")
 ## get model 
 m = MimiGIVE.get_model();
 
-## estimate scghg
+println("start estimation")
+## estimate scghg  --> function compute_scc is from MimiGIVE package
 results = 
     MimiGIVE.compute_scc(m, 
                         n                       = n , 
@@ -101,8 +107,8 @@ results =
                         rffsp_sampling_ids      = rffsp_sampling_ids,       ## optionally read the rffsp-fair parameter sequence from file
                         CIAM_GDPcap             = true, 
                         discount_rates          = discount_rates, 
-                        # save_list               = save_list,                ## comment out if save_list is empty
-                        # output_dir              = output_dir,               ## comment out if save_list is empty
+                        save_list               = save_list,                ## comment out if save_list is empty
+                        output_dir              = output_dir,               ## comment out if save_list is empty
                         save_slr_damages        = false,                    ## save coastal damages, comparable to including DamageAggregator components in save_list
                         save_cpc                = true,                     ## must be true to recover certainty equivalent scghgs
                         compute_domestic_values = false,
@@ -116,7 +122,7 @@ results =
 scghgs = DataFrame(sector = String[], discount_rate = String[], trial = Int[], scghg = Int[]);
     
 ## populate data
-for (k, v) in results[:scc]
+for (k, v) in results[:scc] # results is the output of the model run, looping thru scc property
     for (i, sc) in enumerate(v.ce_sccs)
         push!(scghgs, (sector = String(k.sector), discount_rate = k.dr_label, trial = i, scghg = round(Int, sc*pricelevel_2005_to_2020)))
     end
