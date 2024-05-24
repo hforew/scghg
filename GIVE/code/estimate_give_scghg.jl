@@ -2,15 +2,16 @@
 ############################  preamble
 ######################################
 
-## set the environment
-using Pkg;
-Pkg.activate(joinpath(@__DIR__, ".."));  # activate enviro 1 folder up from current dir
+## set the environment (COMMENT OUT TO USE GLOBAL ENVIRO FOR YOUR FORK)
+# activates enviro within GIVE folder (using Project.toml and manifest.toml files)
+# using Pkg;
+# Pkg.activate(joinpath(@__DIR__, ".."));  # activate enviro 1 folder up from current dir (i.e. GIVE folder)
 
 ## instantiate the environment
-Pkg.instantiate(); # installs any missing packages 
+# Pkg.instantiate(); # installs any missing packages 
 
 
-## precompile
+## precompile  # Without instantiating enviro above, this uses local (edited) MimiGIVE package
 using Mimi, MimiGIVE, MimiRFFSPs, DataDeps, Random, CSV, DataFrames, Statistics; # load packages
 
 println("starting data download")
@@ -26,7 +27,7 @@ MimiRFFSPs.datadep"rffsps_v5" # downloads
 seed = 42;
 
 ## set number of monte carlo draws
-n = 2;  # reduce number for test
+n = 10000;  # reduce number for test
 
 ## set emissions year
 year = 2020;
@@ -53,22 +54,23 @@ save_list =
         (:Socioeconomic, :co2_emissions),                      # Emissions (GtC/yr)
          (:Socioeconomic, :ch4_emissions),                    # Emissions (GtCH4/yr)
          (:Socioeconomic, :n2o_emissions),                    # Emissions (GtN2O/yr)
-        # (:Socioeconomic, :population),                       # Country-level population (millions of persons)
-        # (:Socioeconomic, :population_global),                # Global population (millions of persons)
-        # (:Socioeconomic, :gdp_global),                       # Global GDP (billions of USD $2005/yr)
-        # (:PerCapitaGDP, :global_pc_gdp),                     # Global per capita GDP (thousands of USD $2005/yr)
-        # (:TempNorm_1850to1900, :global_temperature_norm),    # Global surface temperature anomaly (K) from preinudstrial
+         (:Socioeconomic, :population),                       # Country-level population (millions of persons)
+         (:Socioeconomic, :population_global),                # Global population (millions of persons)
+         (:Socioeconomic, :gdp_global),                       # Global GDP (billions of USD $2005/yr)
+         (:PerCapitaGDP, :global_pc_gdp),                     # Global per capita GDP (thousands of USD $2005/yr)
+         (:TempNorm_1850to1900, :global_temperature_norm),    # Global surface temperature anomaly (K) from preinudstrial
          (:co2_cycle, :co2),                                  # Total atmospheric concentrations (ppm)
          (:ch4_cycle, :CH₄),                                  # Total atmospheric concentrations (ppb)
          (:n2o_cycle, :N₂O),                                  # Total atmospheric concentrations (ppb)
-        # (:OceanPH, :pH),                                     # Ocean pH levels
-        # (:OceanHeatAccumulator, :del_ohc_accum),             # Accumulated Ocean heat content anomaly
-        # (:global_sea_level, :sea_level_rise),                # Total sea level rise from all components (includes landwater storage for projection periods) (m)
+         (:OceanPH, :pH),                                     # Ocean pH levels
+         (:OceanHeatAccumulator, :del_ohc_accum),             # Accumulated Ocean heat content anomaly
+         (:global_sea_level, :sea_level_rise),                # Total sea level rise from all components (includes landwater storage for projection periods) (m)
          (:CromarMortality, :excess_deaths),                  # Country-level excess deaths
          (:CromarMortality, :excess_death_rate),              # Country-level excess death rate
          (:DamageAggregator, :cromar_mortality_damage),       # Mortality damages 
          (:DamageAggregator, :agriculture_damage),            # Agricultural damages  
-         (:DamageAggregator, :energy_damage)                  # Energy Damages
+         (:DamageAggregator, :energy_damage),                  # Energy Damages
+         (:VSL, :vsl),
     ];
 
 ## specify your output directory for the save_list items. comment out if save_list is empty
@@ -135,6 +137,6 @@ scghgs |> save(joinpath(@__DIR__, "../output/scghgs/full_distributions/$gas/sc-$
 scghgs_mean = combine(groupby(scghgs, [:sector, :discount_rate]), :scghg => (x -> round(Int, mean(x))) .=> :scghg)
 
 ## export average scghgs    
-scghgs_mean |> save(joinpath(@__DIR__, "../output/scghgs/sc-$gas-$damages-$year.csv"));
+scghgs_mean |> save(joinpath(@__DIR__, "../output/scghgs/sc-$gas-$damages-$year-n$n.csv"));
 
 ## end of script, have a great day.

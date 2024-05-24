@@ -1,5 +1,5 @@
 Author:Climate Impact Lab
-Date Created:24/01/2024
+Date Created:16/05/2024
 Units:2020 PPP-adjusted USD
 gdppc_bottom_code:39.39265060424805
 eta:[1.016010255, 1.244459066, 1.421158116]
@@ -23,7 +23,7 @@ emission_scenarios:RFF-SPv2
 gases:['CO2', 'CH4', 'N2O']
 anomaly_vars:['temperature', 'gmsl']
 machine:Henrys-MacBook-Pro-2.local
-commit:916de92
-url:https://github.com/ClimateImpactLab/dscim-epa/commit/916de92d59e3b2adcab6a789cb2ff2cecacb96e5
+commit:237ef65
+url:https://github.com/ClimateImpactLab/dscim-epa/commit/237ef6505f3949c533bf23c63eccb35ae3878188
 damagefunc_base_period:(2001, 2010)
 socioeconomics_path:/Users/henrywilliams/Documents/GitHub/scghg/DSCIM/input/econ/rff_global_socioeconomics.nc4

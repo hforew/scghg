@@ -2,16 +2,18 @@
 ############################  preamble
 ######################################
 
-## set the environment
-using Pkg;
-Pkg.activate(joinpath(@__DIR__, ".."));
+## set the environment (COMMENT OUT TO NOW USE LOCAL ENVIRO)
+# activates enviro within GIVE folder (using Project.toml and manifest.toml files)
+ using Pkg;
+ Pkg.activate(joinpath(@__DIR__, ".."));
 
 ## instantiate the environment
-Pkg.instantiate();
+ Pkg.instantiate();
 
 ## precompile
 using Mimi, MimiGIVE, MimiRFFSPs, DataDeps, Random, CSV, DataFrames, Statistics, Distributed; # added distributed to this
 
+println("starting data download")
 ## automatically download data dependancies (rffsps)
 ENV["DATADEPS_ALWAYS_ACCEPT"] = "true"
 MimiRFFSPs.datadep"rffsps_v5"
@@ -24,7 +26,7 @@ MimiRFFSPs.datadep"rffsps_v5"
 seed = 42;
 
 ## set number of monte carlo draws
-n = 10; # reduce for faster run
+n = 2; # reduce for faster run
 
 ## set emissions years
 years = [2020, 2030, 2040, 2050, 2060, 2070, 2080];
@@ -46,25 +48,26 @@ discount_rates =
 ## choose the model objects that you would like to save by uncommenting the lines (optional).
 save_list = 
     [
-        # (:Socioeconomic, :co2_emissions),                    # Emissions (GtC/yr)
-        # (:Socioeconomic, :ch4_emissions),                    # Emissions (GtCH4/yr)
-        # (:Socioeconomic, :n2o_emissions),                    # Emissions (GtN2O/yr)
-        # (:Socioeconomic, :population),                       # Country-level population (millions of persons)
-        # (:Socioeconomic, :population_global),                # Global population (millions of persons)
-        # (:Socioeconomic, :gdp_global),                       # Global GDP (billions of USD $2005/yr)
-        # (:PerCapitaGDP, :global_pc_gdp),                     # Global per capita GDP (thousands of USD $2005/yr)
-        # (:TempNorm_1850to1900, :global_temperature_norm),    # Global surface temperature anomaly (K) from preinudstrial
-        # (:co2_cycle, :co2),                                  # Total atmospheric concentrations (ppm)
-        # (:ch4_cycle, :CH₄),                                  # Total atmospheric concentrations (ppb)
-        # (:n2o_cycle, :N₂O),                                  # Total atmospheric concentrations (ppb)
-        # (:OceanPH, :pH),                                     # Ocean pH levels
-        # (:OceanHeatAccumulator, :del_ohc_accum),             # Accumulated Ocean heat content anomaly
-        # (:global_sea_level, :sea_level_rise),                # Total sea level rise from all components (includes landwater storage for projection periods) (m)
-        # (:CromarMortality, :excess_deaths),                  # Country-level excess deaths
-        # (:CromarMortality, :excess_death_rate),              # Country-level excess death rate
-        # (:DamageAggregator, :cromar_mortality_damage),       # Mortality damages 
-        # (:DamageAggregator, :agriculture_damage),            # Agricultural damages  
-        # (:DamageAggregator, :energy_damage)                  # Energy Damages
+         (:Socioeconomic, :co2_emissions),                    # Emissions (GtC/yr)
+         (:Socioeconomic, :ch4_emissions),                    # Emissions (GtCH4/yr)
+         (:Socioeconomic, :n2o_emissions),                    # Emissions (GtN2O/yr)
+         (:Socioeconomic, :population),                       # Country-level population (millions of persons)
+         (:Socioeconomic, :population_global),                # Global population (millions of persons)
+         (:Socioeconomic, :gdp_global),                       # Global GDP (billions of USD $2005/yr)
+         (:PerCapitaGDP, :global_pc_gdp),                     # Global per capita GDP (thousands of USD $2005/yr)
+         (:TempNorm_1850to1900, :global_temperature_norm),    # Global surface temperature anomaly (K) from preinudstrial
+         (:co2_cycle, :co2),                                  # Total atmospheric concentrations (ppm)
+         (:ch4_cycle, :CH₄),                                  # Total atmospheric concentrations (ppb)
+         (:n2o_cycle, :N₂O),                                  # Total atmospheric concentrations (ppb)
+         (:OceanPH, :pH),                                     # Ocean pH levels
+         (:OceanHeatAccumulator, :del_ohc_accum),             # Accumulated Ocean heat content anomaly
+         (:global_sea_level, :sea_level_rise),                # Total sea level rise from all components (includes landwater storage for projection periods) (m)
+         (:CromarMortality, :excess_deaths),                  # Country-level excess deaths
+         (:CromarMortality, :excess_death_rate),              # Country-level excess death rate
+         (:DamageAggregator, :cromar_mortality_damage),       # Mortality damages 
+         (:DamageAggregator, :agriculture_damage),            # Agricultural damages  
+         (:DamageAggregator, :energy_damage),                  # Energy Damages
+         (:VSL, :vsl)
     ];
 
 ## read the series of rffsp-fair pairings. these were randomly selected pairings. read GIVE documentation for other functionality.
@@ -89,6 +92,8 @@ addprocs(21);
 ######################################
 ####################### estimate scghg
 ######################################
+
+println("starting multiple processes")
 
 pmap((year, gas) for 
     year in years, 
@@ -143,7 +148,7 @@ pmap((year, gas) for
     scghgs_mean = combine(groupby(scghgs, [:sector, :discount_rate]), :scghg => (x -> round(Int, mean(x))) .=> :scghg)
 
     ## export average scghgs    
-    scghgs_mean |> save(joinpath(@__DIR__, "../output/scghgs/sc-$gas-$damages-$year.csv"));
+    scghgs_mean |> save(joinpath(@__DIR__, "../output/scghgs/sc-$gas-$damages-$year-n$n.csv"));
        
 end
 
