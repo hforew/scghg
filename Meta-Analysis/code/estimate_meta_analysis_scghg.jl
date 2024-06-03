@@ -24,7 +24,7 @@ MimiRFFSPs.datadep"rffsps_v5"
 seed = 42;
 
 ## set number of monte carlo draws
-n = 10000;
+n = 2;
 
 ## set emissions year
 year = 2020;
@@ -38,9 +38,9 @@ gas = :CO2;
 ## set named list of discount rates
 discount_rates = 
     [
-        (label = "1.5% Ramsey", prtp = exp(0.000091496)-1, eta  = 1.016010261),
+       # (label = "1.5% Ramsey", prtp = exp(0.000091496)-1, eta  = 1.016010261),
         (label = "2.0% Ramsey", prtp = exp(0.001972641)-1, eta  = 1.244459020),
-        (label = "2.5% Ramsey", prtp = exp(0.004618785)-1, eta  = 1.421158057)
+       # (label = "2.5% Ramsey", prtp = exp(0.004618785)-1, eta  = 1.421158057)
     ];
 
 ## choose the model objects that you would like to save by uncommenting the lines (optional).

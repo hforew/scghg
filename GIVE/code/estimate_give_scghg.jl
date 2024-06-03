@@ -27,7 +27,7 @@ MimiRFFSPs.datadep"rffsps_v5" # downloads
 seed = 42;
 
 ## set number of monte carlo draws
-n = 10000;  # reduce number for test
+n = 2;  # reduce number for test
 
 ## set emissions year
 year = 2020;
@@ -41,9 +41,9 @@ gas = :CO2;
 ## set named list of discount rates
 discount_rates = 
     [
-        (label = "1.5% Ramsey", prtp = exp(0.000091496)-1, eta  = 1.016010261),
+      #  (label = "1.5% Ramsey", prtp = exp(0.000091496)-1, eta  = 1.016010261),
         (label = "2.0% Ramsey", prtp = exp(0.001972641)-1, eta  = 1.244459020),
-        (label = "2.5% Ramsey", prtp = exp(0.004618785)-1, eta  = 1.421158057)
+      #  (label = "2.5% Ramsey", prtp = exp(0.004618785)-1, eta  = 1.421158057)
     ];
 
 ## choose the model objects that you would like to save by uncommenting the lines (optional).
@@ -52,25 +52,30 @@ discount_rates =
 save_list = 
     [
         (:Socioeconomic, :co2_emissions),                      # Emissions (GtC/yr)
-         (:Socioeconomic, :ch4_emissions),                    # Emissions (GtCH4/yr)
-         (:Socioeconomic, :n2o_emissions),                    # Emissions (GtN2O/yr)
+       #  (:Socioeconomic, :ch4_emissions),                    # Emissions (GtCH4/yr)
+       #  (:Socioeconomic, :n2o_emissions),                    # Emissions (GtN2O/yr)
          (:Socioeconomic, :population),                       # Country-level population (millions of persons)
          (:Socioeconomic, :population_global),                # Global population (millions of persons)
          (:Socioeconomic, :gdp_global),                       # Global GDP (billions of USD $2005/yr)
          (:PerCapitaGDP, :global_pc_gdp),                     # Global per capita GDP (thousands of USD $2005/yr)
          (:TempNorm_1850to1900, :global_temperature_norm),    # Global surface temperature anomaly (K) from preinudstrial
          (:co2_cycle, :co2),                                  # Total atmospheric concentrations (ppm)
-         (:ch4_cycle, :CH₄),                                  # Total atmospheric concentrations (ppb)
-         (:n2o_cycle, :N₂O),                                  # Total atmospheric concentrations (ppb)
-         (:OceanPH, :pH),                                     # Ocean pH levels
-         (:OceanHeatAccumulator, :del_ohc_accum),             # Accumulated Ocean heat content anomaly
+        # (:ch4_cycle, :CH₄),                                  # Total atmospheric concentrations (ppb)
+        # (:n2o_cycle, :N₂O),                                  # Total atmospheric concentrations (ppb)
+        # (:OceanPH, :pH),                                     # Ocean pH levels
+        # (:OceanHeatAccumulator, :del_ohc_accum),             # Accumulated Ocean heat content anomaly
          (:global_sea_level, :sea_level_rise),                # Total sea level rise from all components (includes landwater storage for projection periods) (m)
          (:CromarMortality, :excess_deaths),                  # Country-level excess deaths
          (:CromarMortality, :excess_death_rate),              # Country-level excess death rate
          (:DamageAggregator, :cromar_mortality_damage),       # Mortality damages 
          (:DamageAggregator, :agriculture_damage),            # Agricultural damages  
          (:DamageAggregator, :energy_damage),                  # Energy Damages
-         (:VSL, :vsl),
+         (:CromarMortality, :mortality_costs),    
+         (:DamageAggregator, :total_damage),                  
+         (:DamageAggregator, :total_damage_share),                  
+         (:DamageAggregator, :total_damage_domestic),   
+       #  (:GlobalNetConsumption, :net_cpc),                                              
+         (:VSL, :vsl)
     ];
 
 ## specify your output directory for the save_list items. comment out if save_list is empty
@@ -111,7 +116,7 @@ results =
                         discount_rates          = discount_rates, 
                         save_list               = save_list,                ## comment out if save_list is empty
                         output_dir              = output_dir,               ## comment out if save_list is empty
-                        save_slr_damages        = false,                    ## save coastal damages, comparable to including DamageAggregator components in save_list
+                        save_slr_damages        = true,                    ## save coastal damages, comparable to including DamageAggregator components in save_list
                         save_cpc                = true,                     ## must be true to recover certainty equivalent scghgs
                         compute_domestic_values = false,
                         compute_sectoral_values = true);
