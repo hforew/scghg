@@ -24,7 +24,8 @@ MimiRFFSPs.datadep"rffsps_v5" # downloads
 ######################################
 
 ## set random seed for monte carlo 
-seed = 42;
+ seed = 42;
+# seed = 1; # MY SEED
 
 ## set number of monte carlo draws
 n = 2;  # reduce number for test
@@ -35,8 +36,12 @@ year = 2020;
 ## choose damage module
 damages = :give;
 
+## version 
+
+version = "V3"  # my hardcoded version
+
 ## choose gas
-gas = :CO2;
+gas = :CO2;  # colon for symbol variables (like a string, or list of option for function)
 
 ## set named list of discount rates
 discount_rates = 
@@ -74,12 +79,12 @@ save_list =
          (:DamageAggregator, :total_damage),                  
          (:DamageAggregator, :total_damage_share),                  
          (:DamageAggregator, :total_damage_domestic),   
-       #  (:GlobalNetConsumption, :net_cpc),                                              
+         (:global_netconsumption, :net_cpc),                                             
          (:VSL, :vsl)
     ];
 
 ## specify your output directory for the save_list items. comment out if save_list is empty
- output_dir = joinpath(@__DIR__, "../output/save_list/$gas-$damages-$year-n$n")
+ output_dir = joinpath(@__DIR__, "../output/save_list/$gas-$version$damages-$year-n$n")
 
 ## read the series of rffsp-fair pairings. these were randomly selected pairings. read GIVE documentation for other functionality.
 fair_parameter_set_ids = CSV.File(joinpath(@__DIR__, "../input/rffsp_fair_sequence.csv"))["fair_id"][1:n];
@@ -136,12 +141,15 @@ for (k, v) in results[:scc] # results is the output of the model run, looping th
 end
 
 ## export full distribution    
-scghgs |> save(joinpath(@__DIR__, "../output/scghgs/full_distributions/$gas/sc-$gas-$damages-$year-n$n.csv"));
+scghgs |> save(joinpath(@__DIR__, "../output/scghgs/full_distributions/$gas/sc$version-$gas-$damages-$year-n$n.csv"));
 
 ## collapse to the certainty equivalent scghgs
 scghgs_mean = combine(groupby(scghgs, [:sector, :discount_rate]), :scghg => (x -> round(Int, mean(x))) .=> :scghg)
 
 ## export average scghgs    
-scghgs_mean |> save(joinpath(@__DIR__, "../output/scghgs/sc-$gas-$damages-$year-n$n.csv"));
+scghgs_mean |> save(joinpath(@__DIR__, "../output/scghgs/sc$version-$gas-$damages-$year-n$n.csv"));
+
+# scghgs_mean |> save(joinpath(@__DIR__, "../output/scghgs_VSL_mod/sc-$gas-$damages-$year-n$n.csv"));
+
 
 ## end of script, have a great day.

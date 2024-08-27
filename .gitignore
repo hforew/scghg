@@ -150,3 +150,7 @@ DSCIM/.DS_Store
 .DS_Store
 GIVE/output/save_list/CO2-give-2020-n10000/results/model_1/ch4_cycle_CH₄.csv
 *.csv
+GIVE/code/.vscode/settings.json
+*.xlsx
+*.csv
+*.xlsx
