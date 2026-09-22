@@ -1,0 +1,52 @@
+
+julia> include("estimate_give_scghgNEW.jl")
+VSL rep
+VSL v0
+VSL v2
+VSL v3
+starting data download
+create model object
+new sector
+start estimation
+ERROR: LoadError: UndefVarError: get_modified_model not defined
+Stacktrace:
+ [1] modified_post_trial_func(mcs::MonteCarloSimulationInstance, trialnum::Int64, ntimesteps::Int64, tup::Nothing)
+   @ Main ~/Documents/GitHub/scghg/GIVE/code/scc_new_sector.jl:434
+ [2] run(sim_def::MonteCarloSimulationDef, models::Vector{Model}, samplesize::Int64; ntimesteps::Int64, trials_output_filename::Nothing, results_output_dir::String, pre_trial_func::Nothing, post_trial_func::typeof(modified_post_trial_func), scenario_func::Nothing, scenario_placement::Mimi.ScenarioLoopPlacement, scenario_args::Nothing, results_in_memory::Bool)
+   @ Mimi ~/.julia/packages/Mimi/l30ax/src/mcs/montecarlo.jl:641
+ [3] _compute_modified_scc_mcs(mm::MarginalModel, n::Int64; year::Int64, last_year::Int64, discount_rates::Vector{NamedTuple}, certainty_equivalent::Bool, fair_parameter_set::Symbol, fair_parameter_set_ids::Vector{Int64}, rffsp_sampling::Symbol, rffsp_sampling_ids::Vector{Int64}, gas::Symbol, save_list::Vector{Tuple{Symbol, Symbol}}, output_dir::String, save_md::Bool, save_cpc::Bool, save_slr_damages::Bool, compute_sectoral_values::Bool, compute_disaggregated_values::Bool, compute_domestic_values::Bool, CIAM_foresight::Symbol, CIAM_GDPcap::Bool, post_mcs_creation_function::Nothing, pulse_size::Float64)
+   @ Main ~/Documents/GitHub/scghg/GIVE/code/scc_new_sector.jl:997
+ [4] compute_modified_scc(m::Model; year::Int64, last_year::Int64, prtp::Float64, eta::Float64, discount_rates::Vector{NamedTuple{(:label, :prtp, :eta), Tuple{String, Float64, Float64}}}, certainty_equivalent::Bool, fair_parameter_set::Symbol, fair_parameter_set_ids::Vector{Int64}, rffsp_sampling::Symbol, rffsp_sampling_ids::Vector{Int64}, n::Int64, gas::Symbol, save_list::Vector{Tuple{Symbol, Symbol}}, output_dir::String, save_md::Bool, save_cpc::Bool, save_slr_damages::Bool, compute_sectoral_values::Bool, compute_disaggregated_values::Bool, compute_domestic_values::Bool, CIAM_foresight::Symbol, CIAM_GDPcap::Bool, post_mcs_creation_function::Nothing, pulse_size::Float64)
+   @ Main ~/Documents/GitHub/scghg/GIVE/code/scc_new_sector.jl:95
+ [5] top-level scope
+   @ ~/Documents/GitHub/scghg/GIVE/code/estimate_give_scghgNEW.jl:318
+ [6] include(fname::String)
+   @ Base.MainInclude ./client.jl:444
+ [7] top-level scope
+   @ REPL[4]:1
+in expression starting at /Users/henrywilliams/Documents/GitHub/scghg/GIVE/code/estimate_give_scghgNEW.jl:318
+
+julia> include("estimate_give_scghgNEW.jl")
+VSL rep
+VSL v0
+VSL v2
+VSL v3
+starting data download
+create model object
+new sector
+start estimation
+ERROR: LoadError: KeyError: key :scc not found
+Stacktrace:
+ [1] getindex
+   @ ./dict.jl:482 [inlined]
+ [2] _compute_modified_scc_mcs(mm::MarginalModel, n::Int64; year::Int64, last_year::Int64, discount_rates::Vector{NamedTuple}, certainty_equivalent::Bool, fair_parameter_set::Symbol, fair_parameter_set_ids::Vector{Int64}, rffsp_sampling::Symbol, rffsp_sampling_ids::Vector{Int64}, gas::Symbol, save_list::Vector{Tuple{Symbol, Symbol}}, output_dir::String, save_md::Bool, save_cpc::Bool, save_slr_damages::Bool, compute_sectoral_values::Bool, compute_disaggregated_values::Bool, compute_domestic_values::Bool, CIAM_foresight::Symbol, CIAM_GDPcap::Bool, post_mcs_creation_function::Nothing, pulse_size::Float64)
+   @ Main ~/Documents/GitHub/scghg/GIVE/code/scc_new_sector.jl:1107
+ [3] compute_modified_scc(m::Model; year::Int64, last_year::Int64, prtp::Float64, eta::Float64, discount_rates::Vector{NamedTuple{(:label, :prtp, :eta), Tuple{String, Float64, Float64}}}, certainty_equivalent::Bool, fair_parameter_set::Symbol, fair_parameter_set_ids::Vector{Int64}, rffsp_sampling::Symbol, rffsp_sampling_ids::Vector{Int64}, n::Int64, gas::Symbol, save_list::Vector{Tuple{Symbol, Symbol}}, output_dir::String, save_md::Bool, save_cpc::Bool, save_slr_damages::Bool, compute_sectoral_values::Bool, compute_disaggregated_values::Bool, compute_domestic_values::Bool, CIAM_foresight::Symbol, CIAM_GDPcap::Bool, post_mcs_creation_function::Nothing, pulse_size::Float64)
+   @ Main ~/Documents/GitHub/scghg/GIVE/code/scc_new_sector.jl:94
+ [4] top-level scope
+   @ ~/Documents/GitHub/scghg/GIVE/code/estimate_give_scghgNEW.jl:318
+ [5] include(fname::String)
+   @ Base.MainInclude ./client.jl:444
+ [6] top-level scope
+   @ REPL[4]:1
+in expression starting at /Users/henrywilliams/Documents/GitHub/scghg/GIVE/code/estimate_give_scghgNEW.jl:318

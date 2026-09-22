@@ -38,7 +38,7 @@ damages = :give;
 
 ## version 
 
-version = "V3"  # my hardcoded version
+version = "V1fork"  # my hardcoded version
 
 ## choose gas
 gas = :CO2;  # colon for symbol variables (like a string, or list of option for function)
